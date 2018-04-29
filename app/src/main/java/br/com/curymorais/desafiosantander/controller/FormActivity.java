@@ -12,6 +12,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +23,7 @@ import br.com.curymorais.desafiosantander.R;
 import br.com.curymorais.desafiosantander.Service.FormReadService;
 import br.com.curymorais.desafiosantander.domain.dto.FieldDTO;
 import br.com.curymorais.desafiosantander.domain.model.EditTextSantander;
-import br.com.curymorais.desafiosantander.util.ViewBuilder;
+import br.com.curymorais.desafiosantander.util.FieldBuilder;
 
 public class FormActivity extends RootActivity{
     private static final String TAG = "FORM_ACTIVITY";
@@ -40,6 +41,10 @@ public class FormActivity extends RootActivity{
                 if (x instanceof EditTextSantander){
                     if(((EditTextSantander) x).isRequired() && ((EditTextSantander) x).getText().toString().equalsIgnoreCase("")){
                         verified = false;
+                    }
+                    if(((EditTextSantander) x).getInputType() == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS && !android.util.Patterns.EMAIL_ADDRESS.matcher(((EditTextSantander) x).getText()).matches()){
+                        verified = false;
+                        Toast.makeText(getApplicationContext(),"E-mail com formato invalido!",Toast.LENGTH_LONG).show();
                     }
                     myIntent.putExtra("field"+((EditTextSantander) x).getHint(), ((EditTextSantander) x).getText().toString());
                 }
@@ -106,17 +111,17 @@ public class FormActivity extends RootActivity{
         for (FieldDTO f : listaFields){
             switch (f.getType()) {
                 case 1:
-//                    listaObjetos.add(ViewBuilder.getEditTextFromField(f, this));
-                    listaObjetos.add(ViewBuilder.getEditTextSantanderFromField(f,this));
+//                    listaObjetos.add(FieldBuilder.getEditTextFromField(f, this));
+                    listaObjetos.add(FieldBuilder.getEditTextSantanderFromField(f,this));
                     break;
                 case 2:
-                    listaObjetos.add(ViewBuilder.getTextViewFromField(f,this));
+                    listaObjetos.add(FieldBuilder.getTextViewFromField(f,this));
                     break;
                 case 4:
-                    listaObjetos.add(ViewBuilder.getCheckBoxFromField(f,this));
+                    listaObjetos.add(FieldBuilder.getCheckBoxFromField(f,this));
                     break;
                 case 5:
-                    Button b = ViewBuilder.getButtonViewFromField(f,this);
+                    Button b = FieldBuilder.getButtonViewFromField(f,this);
                     b.setOnClickListener(startFormResponse);
                     listaObjetos.add(b);
                     break;

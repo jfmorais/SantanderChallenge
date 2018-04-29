@@ -1,17 +1,26 @@
 package br.com.curymorais.desafiosantander.util;
 
 import android.content.Context;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.lang.ref.WeakReference;
 
 import br.com.curymorais.desafiosantander.controller.FormActivity;
 import br.com.curymorais.desafiosantander.domain.dto.FieldDTO;
 import br.com.curymorais.desafiosantander.domain.model.EditTextSantander;
 
-public class ViewBuilder {
+public class FieldBuilder {
     public static EditText getEditTextFromField(FieldDTO f, Context c){
         EditText et = new EditText(c);
         et.setText(f.getMessage());
@@ -50,6 +59,13 @@ public class ViewBuilder {
             et.setRequired(true);
         }else {
             et.setRequired(false);
+        }
+        if(f.getMessage().equalsIgnoreCase("telefone")) {
+            et.setInputType(InputType.TYPE_CLASS_PHONE);
+            BrPhoneNumberFormatter addLineNumberFormatter = new BrPhoneNumberFormatter(new WeakReference<EditText>(et));
+            et.addTextChangedListener(addLineNumberFormatter);
+        }else if (f.getMessage().equalsIgnoreCase("email")){
+            et.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         }
         return et;
     }
